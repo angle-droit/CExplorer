@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
     QMainWindow mainWindow;
     QWidget window;
     window.setFixedSize(400, 300);
-    mainWindow.setWindowTitle("Explorateur de dossiers");
+    mainWindow.setWindowTitle("CExplorer");
     mainWindow.resize(900, 600);
 
     // =====================
@@ -57,9 +57,9 @@ int main(int argc, char *argv[])
     // =====================
     QTreeView *treeView = new QTreeView;
     treeView->setModel(model);
-    treeView->hideColumn(1);
-    treeView->hideColumn(2);
-    treeView->hideColumn(3);
+    // treeView->hideColumn(1);
+    // treeView->hideColumn(2);
+    // treeView->hideColumn(3);
 
     QString rootPath = getRootPath();
     treeView->setRootIndex(model->index(rootPath));
@@ -111,19 +111,27 @@ int main(int argc, char *argv[])
     // =====================
     // CONTEXT MENU
     // =====================
-    mainWindow.setContextMenuPolicy(Qt::CustomContextMenu);
+    treeView->setContextMenuPolicy(Qt::CustomContextMenu);
 
-    QObject::connect(&window, &QWidget::customContextMenuRequested,
-                     [&window](const QPoint &pos) {
-        QMenu menu(&window);
-        menu.addAction("Option 1", [&window]() {
-            QMessageBox::information(&window, "Menu", "Option 1 sélectionnée !");
-        });
-        menu.addAction("Option 2", [&window]() {
-            QMessageBox::information(&window, "Menu", "Option 2 sélectionnée !");
-        });
-        menu.exec(window.mapToGlobal(pos));
-    });;
+    QObject::connect(treeView, &QTreeView::customContextMenuRequested,
+                     [treeView, model](const QPoint &pos) {
+        QModelIndex index = treeView->indexAt(pos);
+        if (!index.isValid())
+            return;
+
+        QMenu menu;
+        QAction *openAction = menu.addAction("Ouvrir");
+        QAction *deleteAction = menu.addAction("Supprimer");
+
+        QAction *selectedAction = menu.exec(treeView->viewport()->mapToGlobal(pos));
+        if (selectedAction == openAction) {
+            QString path = model->filePath(index);
+            qDebug() << "Ouvrir :" << path;
+        } else if (selectedAction == deleteAction) {
+            QString path = model->filePath(index);
+            qDebug() << "Supprimer :" << path;
+        }
+    });
 
     // =====================
     // SHOW
