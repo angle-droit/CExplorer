@@ -80,6 +80,8 @@ int main(int argc, char *argv[])
         treeView->setRootIndex(model->index(getRootPath()));
     });
 
+    // disabled, not implemented
+
     // QObject::connect(refreshAction, &QAction::triggered, [&]() {
     //     model->refresh();
     // });
