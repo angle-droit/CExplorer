@@ -6,6 +6,8 @@
 #include <QDockWidget>
 #include <QListWidget>
 #include <QAction>
+#include <QMenu>
+#include <QMessageBox>
 
 QString getRootPath()
 {
@@ -16,6 +18,9 @@ QString getRootPath()
 #endif
 }
 
+
+
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -24,6 +29,8 @@ int main(int argc, char *argv[])
     // Fenêtre principale
     // =====================
     QMainWindow mainWindow;
+    QWidget window;
+    window.setFixedSize(400, 300);
     mainWindow.setWindowTitle("Explorateur de dossiers");
     mainWindow.resize(900, 600);
 
@@ -42,7 +49,7 @@ int main(int argc, char *argv[])
     // MODELE FILE SYSTEM
     // =====================
     QFileSystemModel *model = new QFileSystemModel;
-    model->setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
+    model->setFilter(QDir::NoDotAndDotDot | QDir::AllDirs | QDir::Files);
     model->setRootPath("");
 
     // =====================
@@ -102,9 +109,25 @@ int main(int argc, char *argv[])
     });
 
     // =====================
+    // CONTEXT MENU
+    // =====================
+    mainWindow.setContextMenuPolicy(Qt::CustomContextMenu);
+
+    QObject::connect(&window, &QWidget::customContextMenuRequested,
+                     [&window](const QPoint &pos) {
+        QMenu menu(&window);
+        menu.addAction("Option 1", [&window]() {
+            QMessageBox::information(&window, "Menu", "Option 1 sélectionnée !");
+        });
+        menu.addAction("Option 2", [&window]() {
+            QMessageBox::information(&window, "Menu", "Option 2 sélectionnée !");
+        });
+        menu.exec(window.mapToGlobal(pos));
+    });;
+
+    // =====================
     // SHOW
     // =====================
     mainWindow.show();
-
     return a.exec();
 }
