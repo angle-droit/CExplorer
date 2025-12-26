@@ -13,9 +13,7 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
-add_executable(fileexplorer main.cpp
-        Scanner.cpp
-        Scanner.h)
+add_executable(fileexplorer main.cpp)
 target_link_libraries(fileexplorer
         Qt::Core
         Qt::Gui

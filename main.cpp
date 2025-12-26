@@ -7,7 +7,8 @@
 #include <QListWidget>
 #include <QAction>
 #include <QMenu>
-#include <QMessageBox>
+#include <QSystemTrayIcon>
+#include <QProcess>
 
 QString getRootPath()
 {
@@ -18,9 +19,6 @@ QString getRootPath()
 #endif
 }
 
-
-
-
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
@@ -30,6 +28,7 @@ int main(int argc, char *argv[])
     // =====================
     QMainWindow mainWindow;
     QWidget window;
+    QProcess process;
     window.setFixedSize(400, 300);
     mainWindow.setWindowTitle("CExplorer");
     mainWindow.resize(900, 600);
@@ -114,7 +113,7 @@ int main(int argc, char *argv[])
     treeView->setContextMenuPolicy(Qt::CustomContextMenu);
 
     QObject::connect(treeView, &QTreeView::customContextMenuRequested,
-                     [treeView, model](const QPoint &pos) {
+                     [treeView, model, &process](const QPoint &pos) {
         QModelIndex index = treeView->indexAt(pos);
         if (!index.isValid())
             return;
@@ -129,7 +128,13 @@ int main(int argc, char *argv[])
             qDebug() << "Ouvrir :" << path;
         } else if (selectedAction == deleteAction) {
             QString path = model->filePath(index);
-            qDebug() << "Supprimer :" << path;
+            QString program = "rm";
+            QStringList arguments;
+            arguments << program << "-rf" << path;
+            process.start(program, arguments);
+            QSystemTrayIcon trayIcon;
+            trayIcon.show();
+            trayIcon.showMessage("élement supprimé", path + "a été supprimé !", QSystemTrayIcon::Warning, 5000);
         }
     });
 
