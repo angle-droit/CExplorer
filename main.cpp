@@ -129,12 +129,17 @@ int main(int argc, char *argv[])
         } else if (selectedAction == deleteAction) {
             QString path = model->filePath(index);
             QString program = "rm";
+
             QStringList arguments;
             arguments << program << "-rf" << path;
             process.start(program, arguments);
+
             QSystemTrayIcon trayIcon;
             trayIcon.show();
-            trayIcon.showMessage("élement supprimé", path + "a été supprimé !", QSystemTrayIcon::Warning, 5000);
+            trayIcon.showMessage("élement supprimé", path + "a été supprimé !", QSystemTrayIcon::Information, 5000);
+
+            QString output = process.readAllStandardOutput();
+            qDebug() << output;
         }
     });
 
