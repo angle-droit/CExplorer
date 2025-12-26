@@ -36,6 +36,9 @@ private:
 private slots:
     void showContextMenu(const QPoint &pos);
     void openFile(const QString &path);
+
+    void fileProperties(const QString &path);
+
     void deleteFile(const QString &path);
 };
 
