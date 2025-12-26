@@ -13,7 +13,13 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
-add_executable(fileexplorer main.cpp)
+add_executable(fileexplorer main.cpp
+        mainwindow.cpp
+        mainwindow.h
+        fileexplorer.cpp
+        fileexplorer.h
+        navigationpanel.cpp
+        navigationpanel.h)
 target_link_libraries(fileexplorer
         Qt::Core
         Qt::Gui
